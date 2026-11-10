@@ -9,6 +9,7 @@ import questRoutes from './src/routes/questRoutes';
 import userRoutes from './src/routes/userRoutes';
 import eventRoutes from './src/routes/eventRoutes';
 import serverTimeRoute from './src/routes/serverTimeRoute';
+import fireBaseRoute from './src/routes/fireBaseRoute';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -36,6 +37,7 @@ questRoutes(app);
 userRoutes(app);
 eventRoutes(app);
 serverTimeRoute(app);
+fireBaseRoute(app);
 
 // Use the built-in express middleware for serving static files
 app.use(express.static('client'));
