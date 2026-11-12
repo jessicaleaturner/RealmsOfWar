@@ -6,16 +6,16 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jesyikaturner/RealmsOfWar.git"
+    "url": "git+https://github.com/jessicaleaturner/realms-of-war.git"
   },
   "bugs": {
-    "url": "https://github.com/jesyikaturner/RealmsOfWar/issues"
+    "url": "https://github.com/jessicaleaturner/realms-of-war/issues"
   },
-  "homepage": "https://github.com/jesyikaturner/RealmsOfWar#readme",
+  "homepage": "https://github.com/jessicaleaturner/realms-of-war#readme",
   "main": "index.js",
   "scripts": {
     "start": "node -r  esm index.js",
-    "database" : "node -r esm defaultDatabaseSetup.js",
+    "database": "node -r esm defaultDatabaseSetup.js",
     "dev": "nodemon ./index.js --exec babel-node -e js",
     "test": "mocha -r esm"
   },
