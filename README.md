@@ -62,7 +62,7 @@ documentation/               Setup notes and the to-do list
 
 ## Running it locally
 
-You'll need Node.js (the project targets Node 10), a MongoDB database, and a Firebase project with Email/Password sign-in enabled.
+You'll need Node.js (the project targets Node 24 and npm 11 or later), a MongoDB database, and a Firebase project with Email/Password sign-in enabled.
 
 1. Install dependencies:
 
