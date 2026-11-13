@@ -2,7 +2,15 @@
 
 A browser-based RPG prototype where players sign up, take quests for gold and experience, and (eventually) send units out to fight each other. It's a small full-stack app: an Express and MongoDB API, Firebase email/password authentication, and a vanilla JavaScript client built with Materialize.
 
-> **Status: prototype, paused since 2021.** The sign-up flow, quest list and player list are implemented. Combat, quest execution, units and items are not finished. See [What's built](#whats-built) for details.
+> **Status: being modernised.** Dependencies and tooling are up to date and the app runs. Sign-up still needs fixing, and combat, quest execution, units and items aren't finished yet. See [What's built](#whats-built) for details and [`documentation/modernisationPlan.md`](documentation/modernisationPlan.md) for the roadmap.
+
+## Origins
+
+Realms of War started in 2019 as a university cloud computing assignment. It was pitched as a mobile-friendly idle game with social features, inspired by browser games like Reign of Blood and Cookie Clicker. Players buy troops, take quests to level up, and attack other players to climb a leaderboard. The brief was to combine cloud services, so the original ran on Google App Engine with Firebase Authentication, MongoDB Atlas, and a Google Cloud Storage bucket for profile pictures.
+
+All of the game logic in that first version ran in the browser. To take a quest, attack a player or buy a unit, the client fetched the player, changed their gold, experience or units, and sent the whole record back with a `PUT`. That was enough for a working demo, but the server trusted whatever it was sent, so any player could give themselves gold.
+
+The current work rebuilds the project rather than replacing it. Dependencies are up to date, and game rules move to the server. Quest outcomes come from a tested, pure function, and the client can only ask to attempt a quest. The original rules are being ported, not thrown away: the client-side `doQuest` and `determineWinner` code is still in [`client/scripts/index.js`](client/scripts/index.js), commented out. The plan is in [`documentation/modernisationPlan.md`](documentation/modernisationPlan.md).
 
 ## Tech stack
 
@@ -17,7 +25,7 @@ A browser-based RPG prototype where players sign up, take quests for gold and ex
 ## What's built
 
 **Implemented**
-- Email/password sign-up, login and logout through Firebase. Signing up also creates a matching player document in MongoDB (level 1, 20 action points, 100 gold).
+- Email/password sign-up, login and logout through Firebase.
 - Quest list served from `/quest`, seeded from `src/data/defaultQuests.json`. Each quest has requirements (player level, action points, total attack, total units) and rewards (gold, unit experience).
 - Player list served from `/userDetails`, shown in the client for logged-in and logged-out visitors.
 - A server time endpoint, `/serverTime`, formatted with Luxon.
@@ -108,9 +116,10 @@ More detail is in [`documentation/projectSetup.md`](documentation/projectSetup.m
 
 These are documented so they're easy to find, not because they're fixed:
 
+- Sign-up creates the Firebase account but not the player document in MongoDB. The error is swallowed by an empty `catch`, so it fails silently.
+- Sign-up and login errors from Firebase (such as a password under 6 characters) only appear in the browser console.
 - The API doesn't verify Firebase ID tokens on the server. Player routes use the Firebase UID from the URL, so they aren't safe to expose publicly.
-- `/userDetails` only returns the first player.
-- The server logs the full MongoDB connection string at start-up.
+- The players list doesn't hide the signed-in player, and its View and Attack buttons are placeholders.
 
 ## Licence
 

@@ -149,13 +149,36 @@ The API currently trusts whatever `uuid` is in the URL, and `PUT /user/:uuid` wr
 
 A working "start a quest" loop is more convincing than many half-built features.
 
-- Implement `performQuest` for the signed-in player: check they meet the requirements (level, action points and units), deduct action points, apply gold and experience rewards, and handle level-ups.
-- Return the updated player and show the result in the client, including failures ("not enough action points").
-- Remove the remaining event stubs (`addNewEvent`, `getEvent` and `getEvents`) or implement them, depending on whether timed events are needed for quests.
-- Test the quest's cost, reward, level-up and failure cases.
-- Optionally seed default units and items (`defaultUnits.json` and `defaultItems.json` already exist) so quests have something to check against.
+The quest rules already exist in the original client-only prototype: `doQuest`, `determineWinner` and `handleLevelUp`, commented out in `client/scripts/index.js`. This phase ports them to the server and refactors them, rather than designing the rules from scratch.
 
-**Done when:** a new player can sign up, take a quest and see their gold, experience and action points change.
+**Move the rules to the server.** The prototype worked out the result in the browser and then sent the new gold and experience with `axios.put('/user/...')`, so any player could give themselves gold. The client should only say which quest it wants to attempt. The server loads the player and quest, decides the outcome, saves it and returns the result.
+
+- Write the quest logic as a pure function with no Express or Mongoose code, for example `src/game/resolveQuest.ts`:
+
+  ```ts
+  resolveQuest(player: Player, quest: Quest, roll: () => number): QuestResult
+  ```
+
+  `roll` is passed in (`Math.random` in production), so tests can force a win or a loss. `QuestResult` says whether the quest succeeded and why, plus the changes to apply (gold, experience, action points, units lost, new level).
+- `performQuest` becomes a thin controller for the signed-in player. It loads the player and quest, calls `resolveQuest`, saves the changes and returns the updated player with the result. A request should name a quest, not send stats. Consider renaming the route to `POST /quests/:id/attempt`.
+- Port the prototype's rules into `resolveQuest`:
+  - **Hard requirements:** the quest fails without a roll if the player's level or action points are too low.
+  - **Odds:** when the player is short of the required units, each missing unit lowers the success chance by 10%. Meeting every requirement always succeeds. In the prototype, the ranged roll overwrote the melee result, so a melee shortfall could be ignored. Combine the shortfalls into one success chance, or roll once for each and require both to pass.
+  - **Cost of failure:** the prototype planned to "randomly kill some units" on a failed quest. Decide the rule (for example, lose one unit for each missing unit, chosen with `roll`) and implement it.
+  - **Rewards:** on success, deduct action points and add gold and experience.
+  - **Level-ups:** the prototype levelled up when experience passed `level * 100`, then reset experience to 0, which lost any extra experience. Carry the remainder over, and handle gaining more than one level at once.
+- Map the prototype's melee and ranged units onto the current schema (`totalUnits`, `totalAttack` and the unit model), or bring back separate unit types if quests need them.
+- Show the result in the client, including failures ("not enough action points", "the bandits drove you back and you lost 2 units"). Then delete the commented-out prototype code from `client/scripts/index.js`.
+- Delete the event model, controller and routes. They weren't part of the original submission and have no clear purpose. Move `performQuest` into `questController` first. Timed features don't need a collection or background jobs:
+  - **Action point regeneration:** store `actionPointsUpdatedAt` on the player and work out the current value whenever the player is read: `min(max, stored + floor((now - updatedAt) / regenInterval))`.
+  - **Cooldowns:** store an `availableAt` time and compare it with the current time.
+- Save quest results with one atomic conditional update, such as `findOneAndUpdate({ uuid, actionPoints: { $gte: cost } }, { $inc: ... })`, so two requests at the same time (a double click) can't both spend the same action points. If the update returns `null`, the player couldn't afford the quest.
+- Seed default units and items (`defaultUnits.json` and `defaultItems.json` already exist) so quests have something to check against.
+- Unit-test `resolveQuest` directly with a fixed `roll`: hard requirement failures, guaranteed success, success and failure at each shortfall, units lost on failure, rewards, and single and multiple level-ups. Add one integration test for the route.
+
+**Done when:** a new player can sign up, attempt a quest and see their gold, experience, action points and units change, and the client can't change any of these values directly.
+
+**Next, once the slice works:** extend `resolveQuest` so that quests can need specific unit types (tags such as *flying* or *siege*) and items as well as totals, can reward items, and can unlock later quests. This is what turns single quests into a story. Add a test that walks the quest graph and checks that every quest can be reached.
 
 ## Phase 9: Deploy (S to M)
 
