@@ -1,5 +1,6 @@
 {
   "name": "realmsofwar",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "author": "Jessica Turner",
@@ -14,29 +15,24 @@
   "homepage": "https://github.com/jessicaleaturner/realms-of-war#readme",
   "main": "index.js",
   "scripts": {
-    "start": "node -r  esm index.js",
-    "database": "node -r esm defaultDatabaseSetup.js",
-    "dev": "nodemon ./index.js --exec babel-node -e js",
-    "test": "mocha -r esm"
+    "start": "node index.js",
+    "database": "node defaultDatabaseSetup.js",
+    "dev": "node --watch index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "esm": "^3.2.25",
     "express": "^4.17.1",
     "luxon": "^1.22.0",
-    "mongoose": "^5.8.10"
+    "mongoose": "^5.13.15"
   },
   "engines": {
     "node": ">=24",
     "npm": ">=11"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
     "dotenv": "^8.2.0",
     "mocha": "^7.0.1",
-    "nodemon": "^2.0.2",
     "supertest": "^4.0.2"
   }
 }

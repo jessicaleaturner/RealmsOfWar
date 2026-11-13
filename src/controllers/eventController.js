@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { EventSchema } from "../models/eventModel";
-import { UserSchema } from "../models/userModel";
-import { QuestSchema } from "../models/questModel";
+import { EventSchema } from "../models/eventModel.js";
+import { UserSchema } from "../models/userModel.js";
+import { QuestSchema } from "../models/questModel.js";
 
 const Event = mongoose.model("Event", EventSchema);
 const Quest = mongoose.model("Quest", QuestSchema);
