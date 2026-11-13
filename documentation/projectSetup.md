@@ -5,14 +5,14 @@
 5. Setup .env file in project root. Current structure is:
 
         MONGO='mongodb url'
-        FB_APIKEY='firebase apiKey'
-        FB_AUTHDOMAIN='firebase authDomain'
-        FB_DBURL='firebase databaseURL'
-        FB_PID='firebase projectId'
-        FB_SB='firebase storageBucket'
-        FB_MSI='firebase messagingSenderId'
-        FB_AID='firebase appId'
-        FB_MID='firebase measurementId'
+        FIREBASE_API_KEY='firebase apiKey'
+        FIREBASE_AUTH_DOMAIN='firebase authDomain'
+        FIREBASE_DATABASE_URL='firebase databaseURL'
+        FIREBASE_PROJECT_ID='firebase projectId'
+        FIREBASE_STORAGE_BUCKET='firebase storageBucket'
+        FIREBASE_MESSAGING_SENDER_ID='firebase messagingSenderId'
+        FIREBASE_APP_ID='firebase appId'
+        FIREBASE_MEASUREMENT_ID='firebase measurementId'
 
 6. In project root run:
 

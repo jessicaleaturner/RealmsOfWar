@@ -11,14 +11,13 @@ import {
   fillUsers
 } from './profile.js';
 
-let auth, firebaseDB;
+let auth;
 
 // Getting the config details from server
 axios.get("/firebase")
 .then((res) => {
   firebase.initializeApp(res.data);
   auth = firebase.auth();
-  firebaseDB = firebase.firestore();
 
 }).then((res)=> {
 
