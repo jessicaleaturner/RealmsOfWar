@@ -2,13 +2,13 @@
 
 A browser-based RPG prototype where players sign up, take quests for gold and experience, and (eventually) send units out to fight each other. It's a small full-stack app: an Express and MongoDB API, Firebase email/password authentication, and a vanilla JavaScript client built with Materialize.
 
-> **Status: prototype, paused since 2021.** The sign-up flow, quest list and player list are implemented, but the client can't load its Firebase config until one route is mounted (see [Known issues](#known-issues)). Combat, quest execution, units and items are not finished. See [What's built](#whats-built) for details.
+> **Status: prototype, paused since 2021.** The sign-up flow, quest list and player list are implemented. Combat, quest execution, units and items are not finished. See [What's built](#whats-built) for details.
 
 ## Tech stack
 
 | Layer | Tools |
 | --- | --- |
-| Server | Node.js, Express 4, `body-parser`, Babel (`babel-preset-es2015`, `stage-0`) with `esm` |
+| Server | Node.js, Express 4, `body-parser` |
 | Database | MongoDB via Mongoose 5 |
 | Auth | Firebase Authentication (email and password), configured from the client |
 | Client | Vanilla JS (ES modules), jQuery, Axios, Materialize CSS, Luxon |
@@ -74,14 +74,14 @@ You'll need Node.js (the project targets Node 24 and npm 11 or later), a MongoDB
 
    ```
    MONGO='mongodb connection string'
-   FB_APIKEY='firebase apiKey'
-   FB_AUTHDOMAIN='firebase authDomain'
-   FB_DBURL='firebase databaseURL'
-   FB_PID='firebase projectId'
-   FB_SB='firebase storageBucket'
-   FB_MSI='firebase messagingSenderId'
-   FB_AID='firebase appId'
-   FB_MID='firebase measurementId'
+   FIREBASE_API_KEY='firebase apiKey'
+   FIREBASE_AUTH_DOMAIN='firebase authDomain'
+   FIREBASE_DATABASE_URL='firebase databaseURL'
+   FIREBASE_PROJECT_ID='firebase projectId'
+   FIREBASE_STORAGE_BUCKET='firebase storageBucket'
+   FIREBASE_MESSAGING_SENDER_ID='firebase messagingSenderId'
+   FIREBASE_APP_ID='firebase appId'
+   FIREBASE_MEASUREMENT_ID='firebase measurementId'
    ```
 
 3. Seed the default quests:
@@ -108,7 +108,6 @@ More detail is in [`documentation/projectSetup.md`](documentation/projectSetup.m
 
 These are documented so they're easy to find, not because they're fixed:
 
-- The `/firebase` route in `src/routes/fireBaseRoute.js` isn't registered in `index.js`, but the client requests it to load the Firebase config. Sign-in won't initialise until it's mounted.
 - The API doesn't verify Firebase ID tokens on the server. Player routes use the Firebase UID from the URL, so they aren't safe to expose publicly.
 - `/userDetails` only returns the first player.
 - The server logs the full MongoDB connection string at start-up.
