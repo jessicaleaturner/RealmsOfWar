@@ -1,3 +1,5 @@
+import axios from '/vendor/axios/axios.min.js';
+
 export const getData = (route) => {
   return axios.get(route);
 }

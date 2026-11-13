@@ -1,5 +1,9 @@
+import { describe, it, after } from 'node:test';
+import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../index.js';
+
+after(() => mongoose.disconnect());
 
 describe('GET /', () => {
     it('return html response', () => {

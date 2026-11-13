@@ -1,5 +1,5 @@
 ## Run Local Development Build
-1. Install NodeJS and npm
+1. Install Node.js 26 LTS and npm 11 or later (`nvm use` picks the version from `.nvmrc`)
 2. Setup MongoDB and Firebase 
 4. Download project and unzip.
 5. Setup .env file in project root. Current structure is:

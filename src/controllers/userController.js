@@ -2,30 +2,27 @@ import mongoose from "mongoose";
 import { UserSchema } from "../models/userModel.js";
 const User = mongoose.model("User", UserSchema);
 
-export const addNewUser = (req, res) => {
-  let newUser = new User(req.body);
-  newUser.save((err, user) => {
-    if (err) {
-      res.send(err);
-    }
+export const addNewUser = async (req, res) => {
+  try {
+    const user = await new User(req.body).save();
     res.json(user);
-  });
+  } catch (err) {
+    res.send(err);
+  }
 };
 
-export const getUsers = (req, res) => {
-  User.find({}, (err, user) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(user);
-  });
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (err) {
+    res.send(err);
+  }
 };
 
-export const getUsersDetails = (req, res) => {
-  User.find({}, (err, user) => {
-    if (err) {
-      return res.send(err);
-    }
+export const getUsersDetails = async (req, res) => {
+  try {
+    const user = await User.find({});
 
     const users = user.map((u) => ({
       username: u.username,
@@ -35,55 +32,44 @@ export const getUsersDetails = (req, res) => {
     }));
 
     res.json(users);
-  });
-};
-
-export const getUserByToken = (req, res) => {
-  User.findOne({ firebase_token: req.params.token }, (err, user) => {
-    if (err) {
-      return res.send(err);
-    }
-    res.json(user);
-  });
-};
-
-export const updateUser = (req, res) => {
-  let data = req.body;
-  //let currentUser = User.findOne({firebase_token: req.params.token});
-  if (data.messages != null) {
-    // if the data sent is a message then just update the message
-    User.findOneAndUpdate(
-      { firebase_token: req.params.token },
-      { $push: { profileMessages: data.messages } },
-      { new: true },
-      (err, user) => {
-        if (err) {
-          return res.send(err);
-        }
-        res.json(user);
-      },
-    );
-  } else {
-    // otherwise update the value!
-    User.findOneAndUpdate(
-      { firebase_token: req.params.token },
-      req.body,
-      { new: true },
-      (err, user) => {
-        if (err) {
-          res.send(err);
-        }
-        res.json(user);
-      },
-    );
+  } catch (err) {
+    res.send(err);
   }
 };
 
-export const deleteUser = (req, res) => {
-  User.remove({ firebase_token: req.params.token }, (err, user) => {
-    if (err) {
-      res.send(err);
-    }
+export const getUserByToken = async (req, res) => {
+  try {
+    const user = await User.findOne({ firebase_token: req.params.token });
+    res.json(user);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
+export const updateUser = async (req, res) => {
+  let data = req.body;
+  //let currentUser = User.findOne({firebase_token: req.params.token});
+  // if the data sent is a message then just update the message,
+  // otherwise update the value!
+  const update =
+    data.messages != null ? { $push: { profileMessages: data.messages } } : data;
+  try {
+    const user = await User.findOneAndUpdate(
+      { firebase_token: req.params.token },
+      update,
+      { returnDocument: "after" },
+    );
+    res.json(user);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    await User.deleteOne({ firebase_token: req.params.token });
     res.json({ message: "Successfully deleted contact" });
-  });
+  } catch (err) {
+    res.send(err);
+  }
 };

@@ -4,68 +4,57 @@ import { QuestSchema } from "../models/questModel.js";
 // ie 'Quest' becomes quests
 const Quest = mongoose.model("Quest", QuestSchema);
 
-export const getQuests = (req, res) => {
-  Quest.find({}, (err, quest) => {
-    if (err) {
-      res.send(err);
-    }
-    res.json(quest);
-  });
+export const getQuests = async (req, res) => {
+  try {
+    const quests = await Quest.find({});
+    res.json(quests);
+  } catch (err) {
+    res.send(err);
+  }
 };
 
-export const getQuestById = (req, res) => {
-  Quest.findOne({ id: req.params.id }, (err, quest) => {
-    if (err) {
-      res.send(err);
-    }
+export const getQuestById = async (req, res) => {
+  try {
+    const quest = await Quest.findOne({ id: req.params.id });
     res.json(quest);
-  });
+  } catch (err) {
+    res.send(err);
+  }
 };
 
 // admin only route to create new quests
-export const addNewQuest = (req, res) => {
-  let newQuest = new Quest(req.body);
-  newQuest.findOne({ id: req.params.id }, (err, quest) => {
-    if (err) {
-      newQuest.save((err, quest) => {
-        if (err) {
-          res.send(err);
-        }
-        res.json(quest);
-      });
-      console.log("Quest already exists!");
+export const addNewQuest = async (req, res) => {
+  try {
+    // only add the quest if one with this id doesn't exist yet
+    const existing = await Quest.findOne({ id: req.body.id });
+    if (existing) {
+      return res.json({ message: "Quest already exists!" });
     }
-  });
-  // TODO: check to see if it doesnt exist then add to database
-  // newQuest.save((err, quest) => {
-  //   if(err){
-  //     res.send(err);
-  //   }
-  //   res.json(quest);
-  // });
+    const quest = await new Quest(req.body).save();
+    res.json(quest);
+  } catch (err) {
+    res.send(err);
+  }
 };
 
 //admin only route to update quests
-export const updateQuest = (req, res) => {
-  Quest.findOneAndUpdate(
-    { id: req.params.id },
-    req.body,
-    { new: true },
-    (err, quest) => {
-      if (err) {
-        res.send(err);
-      }
-      res.json(quest);
-    },
-  );
+export const updateQuest = async (req, res) => {
+  try {
+    const quest = await Quest.findOneAndUpdate({ id: req.params.id }, req.body, {
+      returnDocument: "after",
+    });
+    res.json(quest);
+  } catch (err) {
+    res.send(err);
+  }
 };
 
 //admin only route to delete quests
-export const deleteQuest = (req, res) => {
-  Quest.remove({ id: req.params.id }, (err, quest) => {
-    if (err) {
-      res.send(err);
-    }
+export const deleteQuest = async (req, res) => {
+  try {
+    await Quest.deleteOne({ id: req.params.id });
     res.json({ message: "Successfully deleted contact" });
-  });
+  } catch (err) {
+    res.send(err);
+  }
 };
