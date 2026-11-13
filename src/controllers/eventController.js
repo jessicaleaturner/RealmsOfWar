@@ -30,17 +30,17 @@ export const getEvents = (req, res) => {
   console.log(currentEvent);
 };
 
-export const deleteEvent = (req, res) => {
+export const deleteEvent = async (req, res) => {
   // https://mongoosejs.com/docs/queries.html
-  Event.deleteOne(
-    { user: req.params.user, eventType: req.params.eventType },
-    (err, event) => {
-      if (err) {
-        res.send(err);
-      }
-      res.json({ message: "Successfully deleted contact" });
-    },
-  );
+  try {
+    await Event.deleteOne({
+      user: req.params.user,
+      eventType: req.params.eventType,
+    });
+    res.json({ message: "Successfully deleted contact" });
+  } catch (err) {
+    res.send(err);
+  }
 };
 
 export const performQuest = (req, res) => {

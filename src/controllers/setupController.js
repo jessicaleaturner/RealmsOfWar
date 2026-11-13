@@ -6,27 +6,21 @@ import quests from "../data/defaultQuests.json" with { type: "json" };
 import items from "../data/defaultItems.json" with { type: "json" };
 import units from "../data/defaultUnits.json" with { type: "json" };
 
-const setupDatabase = () => {
-  addNewQuest(quests);
+const setupDatabase = async () => {
+  await addNewQuest(quests);
 };
 
-const addNewQuest = (data) => {
-  for (var i = 0; i < data.length; i++) {
-    let newQuest = new Quest(data[i]);
-    Quest.findOne({ id: data[i].id }, (err, quest) => {
+const addNewQuest = async (data) => {
+  for (const questData of data) {
+    try {
+      let quest = await Quest.findOne({ id: questData.id });
       if (!quest) {
-        newQuest.save((err, quest) => {
-          if (err) {
-            console.log(err);
-          }
-          console.log(quest);
-        });
-      }
-      if (err) {
-        console.log(err);
+        quest = await new Quest(questData).save();
       }
       console.log(quest);
-    });
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 

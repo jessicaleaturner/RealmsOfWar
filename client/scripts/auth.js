@@ -1,3 +1,12 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
+
 import {
   getData,
   sendDataByToken
@@ -14,14 +23,14 @@ import {
 let auth;
 
 // Getting the config details from server
-axios.get("/firebase")
+getData("/firebase")
 .then((res) => {
-  firebase.initializeApp(res.data);
-  auth = firebase.auth();
+  const app = initializeApp(res.data);
+  auth = getAuth(app);
 
 }).then((res)=> {
 
-  auth.onAuthStateChanged(user => {
+  onAuthStateChanged(auth, user => {
     // populate player list
     if(user) {
       // load current user
@@ -68,7 +77,7 @@ signupForm.addEventListener('submit', (e) => {
   const password = signupForm['signup-password'].value;
 
   // sign up the user
-  auth.createUserWithEmailAndPassword(email, password).then(cred => {
+  createUserWithEmailAndPassword(auth, email, password).then(cred => {
     const modal = document.querySelector('#modal-signup');
     M.Modal.getInstance(modal).close();
     signupForm.reset();
@@ -92,7 +101,7 @@ signupForm.addEventListener('submit', (e) => {
 const logout = document.querySelector('#logout');
 logout.addEventListener('click', e => {
   e.preventDefault();
-  auth.signOut();
+  signOut(auth);
   document.location.reload();
 });
 
@@ -104,7 +113,7 @@ loginForm.addEventListener('submit', (e) => {
   const email = loginForm['login-email'].value;
   const password = loginForm['login-password'].value;
 
-  auth.signInWithEmailAndPassword(email, password).then(cred => {
+  signInWithEmailAndPassword(auth, email, password).then(cred => {
     const modal = document.querySelector('#modal-login');
     M.Modal.getInstance(modal).close();
     loginForm.reset();

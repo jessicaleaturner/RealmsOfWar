@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const fireBaseRoute = (app) => {
   app.route("/firebase").get((req, res, next) => {
