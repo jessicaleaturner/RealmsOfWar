@@ -8,11 +8,11 @@ A browser-based RPG prototype where players sign up, take quests for gold and ex
 
 | Layer | Tools |
 | --- | --- |
-| Server | Node.js, Express 4, `body-parser` |
-| Database | MongoDB via Mongoose 5 |
-| Auth | Firebase Authentication (email and password), configured from the client |
-| Client | Vanilla JS (ES modules), jQuery, Axios, Materialize CSS, Luxon |
-| Tests | Mocha and Supertest |
+| Server | Node.js 26, Express 5 |
+| Database | MongoDB via Mongoose 9 |
+| Auth | Firebase Authentication (email and password) with the modular Firebase JS SDK, configured from the client |
+| Client | Vanilla JS (ES modules), Axios, Materialize CSS |
+| Tests | Node's built-in test runner and Supertest |
 
 ## What's built
 
@@ -42,7 +42,7 @@ src/
   models/                    Mongoose schemas (user, quest, unit, item, event)
   routes/                    Express routes
   data/                      Default quests, items and units (JSON)
-test/                        Mocha and Supertest tests
+test/                        node:test and Supertest tests
 documentation/               Setup notes and the to-do list
 ```
 
@@ -62,7 +62,7 @@ documentation/               Setup notes and the to-do list
 
 ## Running it locally
 
-You'll need Node.js (the project targets Node 24 and npm 11 or later), a MongoDB database, and a Firebase project with Email/Password sign-in enabled.
+You'll need Node.js (the project targets Node 26 LTS and npm 11 or later; with nvm, run `nvm use`), a MongoDB database, and a Firebase project with Email/Password sign-in enabled.
 
 1. Install dependencies:
 

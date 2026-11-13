@@ -2,7 +2,6 @@
 
 import express from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import path from "path";
 import dotenv from "dotenv";
 
@@ -17,24 +16,16 @@ const PORT = process.env.PORT || 8080;
 
 // mongoose connection
 // IMPORTANT!: Make sure to have env file set up! Check documentation!
-dotenv.config();
+dotenv.config({ quiet: true });
 let uriString = process.env.MONGOLAB_BLACK_URI || process.env.MONGO;
-mongoose.Promise = global.Promise;
-mongoose.connect(
-  uriString,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err, res) => {
-    if (err) {
-      console.log("ERROR failed to connect to database", err);
-    } else {
-      console.log("SUCCESS connected to database");
-    }
-  },
-);
+mongoose
+  .connect(uriString)
+  .then(() => console.log("SUCCESS connected to database"))
+  .catch((err) => console.log("ERROR failed to connect to database", err));
 
-// bodyparser setup
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// body parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // database routes
 questRoutes(app);
@@ -45,11 +36,19 @@ fireBaseRoute(app);
 
 // Use the built-in express middleware for serving static files
 app.use(express.static("client"));
+// Axios is installed from npm and served to the client from node_modules
+app.use(
+  "/vendor/axios",
+  express.static(path.join(import.meta.dirname, "node_modules/axios/dist/esm")),
+);
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(import.meta.dirname + "/client/index.html"));
+  res.sendFile(path.join(import.meta.dirname, "client/index.html"));
 });
 
-app.listen(PORT, () => console.log(`your server is running on ${PORT}`));
+// only listen when run directly, so tests can import the app
+if (import.meta.main) {
+  app.listen(PORT, () => console.log(`your server is running on ${PORT}`));
+}
 
 export default app;
