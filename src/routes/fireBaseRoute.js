@@ -1,17 +1,16 @@
-require('dotenv').config();
+import dotenv from "dotenv";
+dotenv.config();
 
-const fireBaseRoute = (app) =>
-{
-  app.route('/firebase')
-  .get((req, res, next) => {
+const fireBaseRoute = (app) => {
+  app.route("/firebase").get((req, res, next) => {
     // making it all safe
-    if (!req.headers['accept'].includes('application/json', 0)) {
-      res.redirect('/');
+    if (!req.headers["accept"].includes("application/json", 0)) {
+      res.redirect("/");
     } else {
-      next()
+      next();
     }
-  },createFireBase);
-}
+  }, createFireBase);
+};
 
 const createFireBase = (req, res) => {
   let firebase = {
@@ -22,9 +21,9 @@ const createFireBase = (req, res) => {
     storageBucket: process.env.FB_SB,
     messagingSenderId: process.env.FB_MSI,
     appId: process.env.FB_AID,
-    measurementId: process.env.FB_MID
+    measurementId: process.env.FB_MID,
   };
   res.json(firebase);
-}
+};
 
 export default fireBaseRoute;

@@ -3,13 +3,14 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
 
-import setupDatabase from "./src/controllers/setupController";
+import setupDatabase from "./src/controllers/setupController.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-require("dotenv").config();
+dotenv.config();
 let uriString = process.env.MONGOLAB_BLACK_URI || process.env.MONGO;
 mongoose.Promise = global.Promise;
 mongoose.connect(
